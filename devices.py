@@ -13,9 +13,9 @@ query_format = '?format=json'
 devices_url = ncs_server + 'api/running/devices/'
 get_devices_url = devices_url + query_format
 get_devices_response = requests.get(get_devices_url, verify=False, auth=(username, password))
-devices = get_devices_response.json()
+devices_basic = get_devices_response.json()
 
-# Devices type
+# Devices detailed
 ddevices_url = ncs_server + 'api/running/devices'
 get_ddevices_url = ddevices_url + '?format=json&deep'
 get_ddevices_response = requests.get(get_ddevices_url, verify=False, auth=(username, password))
@@ -49,12 +49,15 @@ def get_os(hostname):
     return devices_os[hostname]
 
 # Get list of devices
+devices = []
 def get_devices():
-    for item in devices['devices']['device']:
-        name = item['name']
-        pprint(name)
+    for item in devices_basic['devices']['device']:
+        name = str(item['name'])
+        devices.append(name)
+    return ' '.join(devices)
+    #return devices
 
-get_devices()
+print(get_devices())
 
 # Processing
 #print (json.dumps(devices_detailed, indent=4, separators=(',', ': ')))

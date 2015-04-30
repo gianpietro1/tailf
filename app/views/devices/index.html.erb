@@ -1,0 +1,27 @@
+<div class="row">
+  <h2>Devices</h2>
+</div>
+
+<div class="row">
+
+ <div class="col-md-6" id="interfaces">
+    <table class="table table-striped">
+      <th colspan="4" class="text-center tr_header">Device list</th>
+          <tr class="tr_header">
+            <td>Hostname</td>
+            <td>OS</td>
+            <td>Loopback 0</td>
+            <td>Actions</td>
+          </tr>
+          <p><% @devices.each do |device| %></p>
+            <tr>
+              <td><%= device %></td>
+              <td><%= Device.ios(device).upcase %>
+              <td><%= Device.interfaces(device)['Loopback0'][0] %>
+              <td><%= link_to "Details", "devices/#{device}", :device => device, class: "btn btn-success"%></td>
+            </tr>
+          <% end %>
+    </table>
+  </div>
+
+</div>

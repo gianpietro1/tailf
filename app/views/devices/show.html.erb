@@ -1,0 +1,49 @@
+<h1><%= @device %> Interfaces</h1>
+
+<div class="row">
+
+ <div class="col-md-8" id="interfaces">
+    <table class="table table-striped">
+      <th colspan="5" class="text-center">Interfaces</th>
+          <tr class="tr_header">
+            <td>Interface name</td>
+            <td>Description</td>
+            <td>IP Address</td>
+            <td>Mask</td>
+            <td>Actions</td>
+          </tr>
+        <% if @interfaces %>
+          <p><% @interfaces.each do |interface| %></p>
+            <tr>
+              <% unless interface[0].empty? %>
+                <td><%= interface[0] %></td>
+                  <td><%= interface[1][2] %></td>
+                <%= form_tag @device, class: "search-form", :method => :patch do %>
+                  <%= hidden_field_tag :interface, interface[0] %>
+                <% unless interface[1][2] .include?("flat") %>
+                  <td><%= text_field_tag :ip_address, interface[1][0]%></td>
+                  <td><%= text_field_tag :mask_address, interface[1][1]%></td>
+                  <td><%= submit_tag 'Change', method: :patch, class: 'btn btn-info' %></td>
+                <% else %>
+                  <td><%= interface[1][0]%></td>
+                  <td><%= interface[1][1]%></td>
+                <% end %>                  
+                <% end %>
+              <% end %>
+            </tr>
+          <% end %>
+        <% end %>      
+    </table>
+  </div>
+</div>
+
+<div class="row">
+   <div class="col-md-10" class="xml">
+    <h4>Latest transaction XML content</h4>
+    <%= @latest_xml %> 
+  </div>
+</div>
+
+<p></p>
+
+<%= link_to "Back", devices_path, method: :get, class: "btn btn-success pull-left" %>
