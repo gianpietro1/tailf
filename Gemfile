@@ -52,5 +52,6 @@ gem 'json'
 gem 'nokogiri'
 gem 'ipaddress'
 gem 'sqlite3'
+gem 'therubyracer'
 
 
