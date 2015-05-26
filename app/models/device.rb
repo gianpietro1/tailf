@@ -5,7 +5,7 @@ class Device
   require 'ipaddress'
 
   def self.base_url
-    'http://admin:admin@10.133.7.67:8080/api/running/devices'
+    'http://admin:admin@10.133.7.95:8080/api/running/devices'
   end
 
   # list of device names
