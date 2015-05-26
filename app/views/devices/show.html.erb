@@ -16,17 +16,17 @@
           <p><% @interfaces.each do |interface| %></p>
             <tr>
               <% unless interface[0].empty? %>
-                <td><%= interface[0] %></td>
-                  <td><%= interface[1][2] %></td>
+                <td><%= interface[0] + " " + interface[1][4] %></td>
+                <td><%= interface[1][3] %></td>
                 <%= form_tag @device, class: "search-form", :method => :patch do %>
                   <%= hidden_field_tag :interface, interface[0] %>
                 <% unless interface[1][2] .include?("flat") %>
-                  <td><%= text_field_tag :ip_address, interface[1][0]%></td>
-                  <td><%= text_field_tag :mask_address, interface[1][1]%></td>
+                  <td><%= text_field_tag :ip_address, interface[1][1]%></td>
+                  <td><%= text_field_tag :mask_address, interface[1][2]%></td>
                   <td><%= submit_tag 'Change', method: :patch, class: 'btn btn-info' %></td>
                 <% else %>
                   <td><%= interface[1][0]%></td>
-                  <td><%= interface[1][1]%></td>
+                  <td><%= interface[1][3]%></td>
                 <% end %>                  
                 <% end %>
               <% end %>
