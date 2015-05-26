@@ -149,7 +149,7 @@ class Device
     elsif ios(hostname) == 'alu-sr'
       ipaddress_changer = Nokogiri::XML::Builder.new do |xml|
           xml.address('xmlns' => "http://tail-f.com/ned/alu-sr", 'xmlns:y' => "http://tail-f.com/ns/rest", 'xmlns:alu' => "http://tail-f.com/ned/alu-sr", 'xmlns:ncs' => "http://tail-f.com/ns/ncs"){
-          xml.text (ip_address + "/" + mask)
+          xml.text (ip_address + "/" + IPAddr.new(mask).to_i.to_s(2).count("1").to_s)
         }
       end
       ipaddress_url = "/config/alu:router/Base/interface/#{int_name}/address?format=xml"
