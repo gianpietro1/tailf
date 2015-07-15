@@ -10,14 +10,12 @@
           <tr class="tr_header">
             <td>Hostname</td>
             <td>OS</td>
-            <td>Loopback 0</td>
             <td>Actions</td>
           </tr>
           <p><% @devices.each do |device| %></p>
             <tr>
               <td><%= device %></td>
-              <td><%= Device.ios(device).upcase %>
-              <td><%= Device.interfaces(device)['Loopback0'][0] %>
+              <td><%= Device.ios(device) %></td>
               <td><%= link_to "Details", "devices/#{device}", :device => device, class: "btn btn-success"%></td>
             </tr>
           <% end %>

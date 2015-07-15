@@ -1,0 +1,60 @@
+module interfaces {
+	namespace "http://com/example1/interfaces";
+	prefix interfaces;
+	import ietf-inet-types {
+		prefix inet;
+	}
+	import tailf-ncs {
+		prefix ncs;
+	}
+	import tailf-common {
+		prefix tailf;
+	}
+	import tailf-ned-cisco-ios  { 
+		prefix ios;
+	}
+  	import tailf-ned-cisco-ios-xr  { 
+  		prefix cisco-ios-xr; 
+  	}
+  	grouping endpoints {
+		leaf device-name {
+			mandatory true;
+			type leafref {
+				path "/ncs:devices/ncs:device/ncs:name";
+			}
+		}
+		leaf ifname {
+			mandatory true;
+			type string;
+			tailf:info "<Interface Name>;;GE If Number, ej 0 or 0/0 etc";
+		}
+		leaf ifaddress {
+			mandatory true;
+			type inet:ipv4-address;
+		}
+
+	}
+	augment /ncs:services {
+		list dev {
+			key name;
+			uses ncs:service-data;
+			ncs:servicepoint "interfaces";
+
+			leaf name {
+				type string;
+			}
+			list device1 {
+        		key "device-name";
+        		min-elements 1;
+        		max-elements 1;
+        		uses endpoints;
+      		}
+			list device2 {
+        		key "device-name";
+        		min-elements 1;
+        		max-elements 1;
+        		uses endpoints;
+      		}
+		}
+	}
+}

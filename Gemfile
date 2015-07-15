@@ -53,5 +53,6 @@ gem 'nokogiri'
 gem 'ipaddress'
 gem 'sqlite3'
 gem 'therubyracer'
+gem 'will_paginate'
 
 

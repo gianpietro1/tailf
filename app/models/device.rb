@@ -5,7 +5,7 @@ class Device
   require 'ipaddress'
 
   def self.base_url
-    'http://admin:admin@10.133.6.202:8080/api/running/devices'
+    'http://admin:admin@10.96.223.228:8080/api/running/devices'
   end
 
   # list of device names
@@ -29,6 +29,34 @@ class Device
       'alu-sr'
     end
   end
+
+  # Get Loopback 0
+  def self.loopback0(hostname)
+
+    ios = self.ios(hostname)
+
+    if ios == 'cisco-ios-xr'
+        data = RestClient.get (base_url + '/device/' + hostname + '/config/cisco-ios-xr:interface?format=json&deep')
+    elsif ios == 'cisco-ios'
+        data = RestClient.get (base_url + '/device/' + hostname + '/config/ios:interface/Loopback/0?format=json&deep')
+    elsif ios == 'alu-sr'
+        data = RestClient.get (base_url + '/device/' + hostname + '/config/alu:router/Base/interface/Loopback0?format=json&deep')
+    end
+
+    data_parsed = JSON.parse(data)
+
+    if ios == 'alu-sr'
+        loopback = data_parsed["tailf-ned-#{ios}:interface"]['address']
+        loopback_ip = (IPAddress.parse loopback).address
+        loopback_mask = (IPAddress.parse loopback).netmask
+    else
+        loopback_ip = data_parsed["tailf-ned-cisco-ios:Loopback"]["ip"]["address"]["primary"]["address"]
+        loopback_mask = data_parsed["tailf-ned-cisco-ios:Loopback"]["ip"]["address"]["primary"]["mask"]
+    end
+
+    return loopback_ip
+
+  end      
 
   # Get interfaces & IPs hash
   def self.interfaces(hostname)
@@ -69,6 +97,7 @@ class Device
               mask_array << '-'
             end
             intname_array << interface['interface-name']
+            @interface_count = intname_array.count
         end
       
       else
@@ -86,8 +115,15 @@ class Device
               end
             elsif ios == 'cisco-ios'
               intnum_array << interface['name']
-              description_array << interface['description']
-              if interface["ip"]["address"]
+              if interface["description"]
+                description_array << interface['description']
+              else
+                description_array << '-'
+              end
+              if interface["ip"]["no-address"]
+                ip_array << '-'
+                mask_array << '-'
+              elsif interface["ip"]["address"]
                 ip_array << interface["ip"]["address"]["primary"]["address"]
                 mask_array << interface["ip"]["address"]["primary"]["mask"]
               else
@@ -95,13 +131,14 @@ class Device
                 mask_array << '-'
               end
             end            
-            intname_array << item[0]
+            intname_array << item[0].to_s
+            @interface_count = intnum_array.count
           end
         end
       end
 
     # interface merge & ip addresses
-      for i in 0..intname_array.count
+      for i in 0..@interface_count
         intname = intname_array[i].to_s
         intnum = intnum_array[i].to_s
         ip_address = ip_array[i].to_s
@@ -112,7 +149,7 @@ class Device
         else
           port = ''
         end
-        ip_addresses[intname] = [intnum, ip_address, mask_address, description, port]
+        ip_addresses[intname+intnum] = [intnum, ip_address, mask_address, description, port]
       end
       
       return ip_addresses
