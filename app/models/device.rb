@@ -5,15 +5,19 @@ class Device
   require 'ipaddress'
 
   def self.base_url
-    'http://admin:admin@10.133.7.59:8080/api/running/devices'
+    'http://admin:admin@10.133.7.59:8081/api/running/devices'
   end
 
   # list of device names
   def self.all
     data = RestClient.get (base_url + '?format=json')
     data_parsed = JSON.parse(data)
-    data_parsed["tailf-ncs:devices"]["device"].map do |device|
-      device["name"]
+    if data_parsed["tailf-ncs:devices"]["device"]
+      data_parsed["tailf-ncs:devices"]["device"].map do |device|
+        device["name"]
+      end
+    else
+      return nil
     end
   end
 
@@ -27,6 +31,8 @@ class Device
       'cisco-ios'
     elsif data_parsed["tailf-ncs:ned-id"] == "alu-sr-id:alu-sr"  
       'alu-sr'
+    else
+      return nil
     end
   end
 
